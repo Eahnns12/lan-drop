@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	user-select: none;
+}
+
+:root:has(:is(.modal-open, .modal:target, .modal-toggle:checked + .modal, .modal[open])) {
+	/* overflow: hidden; */
+	scrollbar-gutter: unset;
+}
+:root:has(:is(.modal-open, .modal:target, .modal-toggle:checked + .modal, .modal[open])) {
+	/* overflow: hidden; */
+	scrollbar-gutter: unset;
+}
+:root:has(:is(.modal-open, .modal:target, .modal-toggle:checked + .modal, .modal[open])) {
+	/* overflow: hidden; */
+	scrollbar-gutter: unset;
+}
