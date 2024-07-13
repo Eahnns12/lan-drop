@@ -64,7 +64,7 @@ export const FileList = () => {
 						className={`btn btn-square btn-ghost btn-sm ${displayStyle === "SQUARE" && "btn-active"}`}
 						onClick={() => setDisplayStyle("SQUARE")}
 					>
-						<SquaresIcon size={6} />
+						<SquaresIcon />
 					</button>
 
 					<button
@@ -72,7 +72,7 @@ export const FileList = () => {
 						disabled
 						onClick={() => setDisplayStyle("LIST")}
 					>
-						<ListIcon size={6} />
+						<ListIcon />
 					</button>
 				</div>
 			</nav>

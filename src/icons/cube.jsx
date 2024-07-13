@@ -1,6 +1,6 @@
 import React from "react";
 
-export const Cube = ({ size = 5 }) => {
+export const Cube = () => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -8,7 +8,7 @@ export const Cube = ({ size = 5 }) => {
 			viewBox="0 0 24 24"
 			strokeWidth={1.5}
 			stroke="currentColor"
-			className={`h-${size} w-${size} size-${size}`}
+			className={`size-12 h-12 w-12`}
 		>
 			<path
 				strokeLinecap="round"

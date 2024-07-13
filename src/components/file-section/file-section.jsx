@@ -39,7 +39,7 @@ export const FileSection = () => {
 				</div>
 				<div>
 					<label className="btn btn-square btn-neutral btn-sm">
-						<PlusIcon size={6} />
+						<PlusIcon />
 						<input
 							type="file"
 							multiple
