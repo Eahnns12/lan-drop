@@ -4,8 +4,15 @@ const { FuseV1Options, FuseVersion } = require("@electron/fuses");
 module.exports = {
 	packagerConfig: {
 		asar: true,
-		extraResource: ["src/modules/wasm/go/zip/main.wasm"],
 		icon: "./src/images/icon",
+		overwrite: true,
+		appCategoryType: "public.app-category.utilities",
+		extendInfo: {
+			NSAppTransportSecurity: {
+				NSAllowsArbitraryLoads: true,
+			},
+		},
+		extraResource: ["src/modules/wasm/go/zip/main.wasm"],
 	},
 	rebuildConfig: {},
 	makers: [
