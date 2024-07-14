@@ -1,9 +1,9 @@
 const os = require("node:os");
-const { app, ipcMain, dialog, BrowserWindow } = require("electron");
+const { app, ipcMain, BrowserWindow } = require("electron");
 const Core = require("./core");
 const { getLocalIPAddress } = require("./utils");
 
-const core = new Core({ dev: true });
+const core = new Core({ dev: false });
 
 if (require("electron-squirrel-startup")) {
 	app.quit();
