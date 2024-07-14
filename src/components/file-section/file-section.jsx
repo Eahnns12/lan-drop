@@ -35,7 +35,7 @@ export const FileSection = () => {
 			<div className="flex items-center justify-between">
 				<div>
 					<h5 className="text-base tracking-wide">Files</h5>
-					<p className="text-xs font-light text-base-content/60">Choose files to share with</p>
+					<p className="text-xs font-light text-base-content/60">Choose files to share</p>
 				</div>
 				<div>
 					<label className="btn btn-square btn-neutral btn-sm">
@@ -77,7 +77,7 @@ export const FileSection = () => {
 				<div className="flex items-center justify-between">
 					<div>
 						<h6 className="text-sm tracking-wide">Compress files</h6>
-						<p className="text-xs font-light text-base-content/60">For small size files in 25 MB total</p>
+						<p className="text-xs font-light text-base-content/60">Recommended for small size files (25 MB)</p>
 					</div>
 					<input
 						type="checkbox"

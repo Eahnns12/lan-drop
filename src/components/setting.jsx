@@ -66,7 +66,9 @@ export const Setting = ({ settingModalRef }) => {
 							<input type="text" className="grow" value={hostname} onChange={handleHostnameChange} />
 						</label>
 						<div className="label">
-							<span className="label-text-alt text-xs text-base-content/50">at most 60 sec to activate the change</span>
+							<span className="label-text-alt text-xs text-base-content/50">
+								changes may take up to 60 seconds to activate
+							</span>
 						</div>
 					</div>
 

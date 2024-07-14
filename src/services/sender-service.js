@@ -55,7 +55,13 @@ function connectSocket(host, port) {
 }
 
 function sendFileToReceiver(socket, filePath) {
+	if (!fs.existsSync(filePath)) {
+		socket.end();
+		throw new Error("File not exist");
+	}
+
 	if (!fs.statSync(filePath).isFile()) {
+		socket.end();
 		throw new Error("Not a valid file");
 	}
 
@@ -93,6 +99,12 @@ function sendZipToReceiver(socket, filePaths) {
 	let totalSize = 0;
 
 	for (const filePath of filePaths) {
+		const exists = fs.existsSync(filePath);
+
+		if (!exists) {
+			continue;
+		}
+
 		const stat = fs.statSync(filePath);
 
 		if (!stat.isFile()) {
@@ -134,6 +146,7 @@ function sendZipToReceiver(socket, filePaths) {
 			}
 
 			emitter.emit("sent", fileNameBuffer.toString("utf-8"));
+			socket.end();
 		});
 	});
 }
