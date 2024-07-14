@@ -13,6 +13,13 @@ function createReceiver(socket, dir) {
 	let fileSize = 0;
 	let remainingBytes = 0;
 
+	socket.setTimeout(30000);
+
+	socket.on("timeout", () => {
+		emitter.emit("timeout");
+		socket.destroy();
+	});
+
 	socket.on("data", (data) => {
 		if (stream) {
 			stream.write(data);

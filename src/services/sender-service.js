@@ -32,7 +32,10 @@ function connectSocket(host, port) {
 
 			socket.setTimeout(30000);
 
-			socket.on("timeout", () => emitter.emit("timeout"));
+			socket.on("timeout", () => {
+				emitter.emit("timeout");
+				socket.destroy();
+			});
 
 			socket.on("end", () => {
 				emitter.emit("end");
@@ -74,9 +77,13 @@ function sendFileToReceiver(socket, filePath) {
 
 		stream.on("end", () => {
 			emitter.emit("sent", path.basename(filePath));
+			socket.end();
 		});
 
-		stream.on("error", (error) => emitter.emit("fail", error));
+		stream.on("error", (error) => {
+			emitter.emit("fail", error);
+			socket.end();
+		});
 
 		stream.pipe(socket);
 	});
@@ -117,11 +124,13 @@ function sendZipToReceiver(socket, filePaths) {
 
 	socket.write(header, (error) => {
 		if (error) {
-			return emitter.emit("error", error);
+			emitter.emit("error", error);
+			return socket.end();
 		}
 		socket.write(zip, (error) => {
 			if (error) {
-				return emitter.emit("error", error);
+				emitter.emit("error", error);
+				return socket.end();
 			}
 
 			emitter.emit("sent", fileNameBuffer.toString("utf-8"));

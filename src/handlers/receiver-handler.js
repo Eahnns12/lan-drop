@@ -11,6 +11,10 @@ class Receiver {
 			this.core.log.info("receiver-handler: File received successfully: ", file);
 		});
 
+		receiver.emitter.on("timeout", () => {
+			this.core.log.warn("receiver-handler: Receiver connection timed out.");
+		});
+
 		receiver.emitter.on("end", () => {
 			this.core.log.info("receiver-handler: Receiver connection ended.");
 		});

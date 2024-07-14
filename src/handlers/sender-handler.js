@@ -32,28 +32,26 @@ class Sender {
 		});
 	}
 
-	async send(address, port, paths) {
-		try {
-			const socket = await sender.connectSocket(address, port);
-			sender.sendZipToReceiver(socket, paths);
-			socket.end();
-		} catch (error) {
-			this.core.log.error("sender-handler: send: ", error);
-		}
-	}
-
 	async ship(address, port, paths) {
 		await Promise.allSettled(
 			paths.map(async (path) => {
 				try {
 					const socket = await sender.connectSocket(address, port);
 					sender.sendFileToReceiver(socket, path);
-					socket.end();
 				} catch (error) {
 					this.core.log.error("sender-handler: ship: ", error);
 				}
 			})
 		);
+	}
+
+	async send(address, port, paths) {
+		try {
+			const socket = await sender.connectSocket(address, port);
+			sender.sendZipToReceiver(socket, paths);
+		} catch (error) {
+			this.core.log.error("sender-handler: send: ", error);
+		}
 	}
 }
 
