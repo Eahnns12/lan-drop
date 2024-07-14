@@ -52,89 +52,80 @@ function connectSocket(host, port) {
 }
 
 function sendFileToReceiver(socket, filePath) {
-	return new Promise((resolve, reject) => {
-		try {
-			if (!fs.statSync(filePath).isFile()) {
-				throw new Error("Not a valid file");
-			}
+	if (!fs.statSync(filePath).isFile()) {
+		throw new Error("Not a valid file");
+	}
 
-			const fileSizeBuffer = Buffer.alloc(4);
-			const fileNameLengthBuffer = Buffer.alloc(4);
-			const fileNameBuffer = Buffer.from(path.basename(filePath));
+	const fileSizeBuffer = Buffer.alloc(4);
+	const fileNameLengthBuffer = Buffer.alloc(4);
+	const fileNameBuffer = Buffer.from(path.basename(filePath));
 
-			fileSizeBuffer.writeUInt32BE(fs.statSync(filePath).size);
-			fileNameLengthBuffer.writeUInt32BE(fileNameBuffer.length);
+	fileSizeBuffer.writeUInt32BE(fs.statSync(filePath).size);
+	fileNameLengthBuffer.writeUInt32BE(fileNameBuffer.length);
 
-			const header = Buffer.concat([fileSizeBuffer, fileNameLengthBuffer, fileNameBuffer]);
+	const header = Buffer.concat([fileSizeBuffer, fileNameLengthBuffer, fileNameBuffer]);
 
-			socket.write(header, (error) => {
-				if (error) return reject(error);
-
-				const stream = fs.createReadStream(filePath);
-
-				stream.on("end", () => {
-					emitter.emit("sent", path.basename(filePath));
-					resolve();
-				});
-
-				stream.on("error", (error) => emitter.emit("fail", error));
-
-				stream.pipe(socket);
-			});
-		} catch (error) {
-			reject(error);
+	socket.write(header, (error) => {
+		if (error) {
+			return emitter.emit("error", error);
 		}
+
+		const stream = fs.createReadStream(filePath);
+
+		stream.on("end", () => {
+			emitter.emit("sent", path.basename(filePath));
+		});
+
+		stream.on("error", (error) => emitter.emit("fail", error));
+
+		stream.pipe(socket);
 	});
 }
 
 function sendZipToReceiver(socket, filePaths) {
-	return new Promise((resolve, reject) => {
-		try {
-			let totalSize = 0;
+	let totalSize = 0;
 
-			for (const filePath of filePaths) {
-				const stat = fs.statSync(filePath);
+	for (const filePath of filePaths) {
+		const stat = fs.statSync(filePath);
 
-				if (!stat.isFile()) {
-					continue;
-				}
-
-				totalSize += stat.size;
-			}
-
-			if (totalSize > 50 * 1024 * 1024) {
-				throw new Error("Files size too large");
-			}
-
-			const files = filePaths.reduce((acc, curr) => {
-				acc[path.basename(curr)] = fs.readFileSync(curr);
-				return acc;
-			}, {});
-
-			const zip = Buffer.from(compress(files));
-
-			const fileSizeBuffer = Buffer.alloc(4);
-			const fileNameLengthBuffer = Buffer.alloc(4);
-			const fileNameBuffer = Buffer.from("landrop.zip");
-
-			fileSizeBuffer.writeUInt32BE(zip.length);
-			fileNameLengthBuffer.writeUInt32BE(fileNameBuffer.length);
-
-			const header = Buffer.concat([fileSizeBuffer, fileNameLengthBuffer, fileNameBuffer]);
-
-			socket.write(header, (error) => {
-				if (error) return reject(error);
-
-				socket.write(zip, (error) => {
-					if (error) return reject(error);
-
-					emitter.emit("sent", fileNameBuffer.toString("utf-8"));
-					resolve();
-				});
-			});
-		} catch (error) {
-			reject(error);
+		if (!stat.isFile()) {
+			continue;
 		}
+
+		totalSize += stat.size;
+	}
+
+	if (totalSize > 50 * 1024 * 1024) {
+		throw new Error("Files size too large");
+	}
+
+	const files = filePaths.reduce((acc, curr) => {
+		acc[path.basename(curr)] = fs.readFileSync(curr);
+		return acc;
+	}, {});
+
+	const zip = Buffer.from(compress(files));
+
+	const fileSizeBuffer = Buffer.alloc(4);
+	const fileNameLengthBuffer = Buffer.alloc(4);
+	const fileNameBuffer = Buffer.from("landrop.zip");
+
+	fileSizeBuffer.writeUInt32BE(zip.length);
+	fileNameLengthBuffer.writeUInt32BE(fileNameBuffer.length);
+
+	const header = Buffer.concat([fileSizeBuffer, fileNameLengthBuffer, fileNameBuffer]);
+
+	socket.write(header, (error) => {
+		if (error) {
+			return emitter.emit("error", error);
+		}
+		socket.write(zip, (error) => {
+			if (error) {
+				return emitter.emit("error", error);
+			}
+
+			emitter.emit("sent", fileNameBuffer.toString("utf-8"));
+		});
 	});
 }
 

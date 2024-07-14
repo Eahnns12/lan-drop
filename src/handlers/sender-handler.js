@@ -35,7 +35,7 @@ class Sender {
 	async send(address, port, paths) {
 		try {
 			const socket = await sender.connectSocket(address, port);
-			await sender.sendZipToReceiver(socket, paths);
+			sender.sendZipToReceiver(socket, paths);
 			socket.end();
 		} catch (error) {
 			this.core.log.error("sender-handler: send: ", error);
@@ -43,11 +43,11 @@ class Sender {
 	}
 
 	async ship(address, port, paths) {
-		await Promise.all(
+		await Promise.allSettled(
 			paths.map(async (path) => {
 				try {
 					const socket = await sender.connectSocket(address, port);
-					await sender.sendFileToReceiver(socket, path);
+					sender.sendFileToReceiver(socket, path);
 					socket.end();
 				} catch (error) {
 					this.core.log.error("sender-handler: ship: ", error);
